@@ -45,7 +45,7 @@ void sendMessage()
             {
                 char buffer[11];
                 // Extract integer part whith 2 digitis
-                int intpart = (int)actual_values[i] * 100;
+                int intpart = (int)(actual_values[i] * 100);
 
                 //** Fill buffer **//
                 //** Adress **//
@@ -61,7 +61,7 @@ void sendMessage()
                 }
 
                 //** Sign **//
-                if (actual_value[i] < 0)
+                if (actual_values[i] < 0)
                 {
                     buffer[2] = '-';
                     intpart = intpart * (-1);
@@ -109,7 +109,7 @@ void reciveMessage()
     char sign, end_message;
     float value_float = 0;
 
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i <= 10; i++)
     {
         if (Serial.available())
         {
@@ -118,7 +118,7 @@ void reciveMessage()
         }
     }
 
-    adress = buffer[0] * 10 + buffer[1] - '0';
+    adress = (buffer[0] - '0') * 10 + buffer[1] - '0';
     sign = buffer[2];
     if (sign == '/')
     {
@@ -126,11 +126,11 @@ void reciveMessage()
        return;
     }
 
-    for (int i = 3; i < 10; i++)
+    for (int i = 3; i <= 9; i++)
     {
         if (i != 7)
         {
-            value_float += value_float * 10 + buffer[i];
+            value_float = value_float * 10 + buffer[i] -'0';
         }
     }
     value_float = value_float / 100;
@@ -141,11 +141,15 @@ void reciveMessage()
     }
 
     end_message = buffer[10];
+
+    //** Message corrupted **//
     if (end_message != '\n')
     {
+        actual_values[adress] = NAN;
         return;
     }
 
-    actual_values[adress] = 
+    actual_values[adress] = value_float;
+    prev_values[adress] = actual_values[adress];
 }
 //========= ------------- =========//
