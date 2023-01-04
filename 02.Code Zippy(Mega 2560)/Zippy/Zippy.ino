@@ -33,10 +33,11 @@ void setup()
   //$$$$$1
 
   //$$$$$2
-  pinMode(PUMP_COL_1, OUTPUT);
+  pinMode(PUMP_COL_1_PIN, OUTPUT);
   //$$$$$2
 
-  datas[ADR_SET_TEMP_HEATER] = 18;
+  actual_values[ADR_SET_TEMP_HEATER] = 18;
+  prev_values[ADR_SET_TEMP_HEATER] = 18;
 }
 //========== ------ ==========//
 

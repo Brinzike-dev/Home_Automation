@@ -27,48 +27,21 @@ DHT dht_outside(DHT_PIN_OUTSIDE, DHTTYPE_OUTSIDE); //// Initialize DHT sensor fo
 #define INVALID_FLOAT -100000
 
 //!!!!!!!!!!!!!!! Update number of value !!!!!!!!!!!!!!!//
-#define NUMBER_OF_ADDRESSES 16
-#define LAST_ADRESS_TO_SENT 13
+#define NUMBER_OF_ADDRESSES 9
 
 //** Adress of datas **//
-//$$$$$3
-// #define ADR_SET_TEMP_HEATER 0
-// #define ADR_PREV_AIR_TEMP_ROOM 1
-// #define ADR_ACT_AIR_TEMP_ROOM 2
-// #define ADR_PREV_AIR_HUMIDITY_ROOM 3
-// #define ADR_ACT_AIR_HUMIDITY_ROOM 4
-// #define ADR_PREV_STATUS_HEATER 5
-// #define ADR_ACT_STATUS_HEATER 6
-// #define ADR_PREV_AIR_TEMP_OUTSIDE 7
-// #define ADR_ACT_AIR_TEMP_OUTSIDE 8
-// #define ADR_PREV_AIR_HUMIDITY_OUTSIDE 9
-// #define ADR_ACT_AIR_HUMIDITY_OUTSIDE 10
+#define ADR_TEMP_AIR_ROOM 0
+#define ADR_HUMIDITY_AIR_ROOM 1
+#define ADR_TEMP_AIR_OUTSIDE 2
+#define ADR_HUMIDITY_AIR_OUTSIDE 3
+#define ADR_STATUS_HEATER 4
+#define ADR_SOIL_HUMIDITY_COL_1 5
+#define ADR_COMMAND_PUMP_COL_1 6
+#define ADR_SET_TEMP_HEATER 7
+#define ADR_AUTOWATERING 8
 
-// //$$$$$1
-// #define ADR_PREV_SOIL_HUM_COL_1 11
-// #define ADR_ACT_SOIL_HUM_COL_1 12
-// //$$$$$1
-
-// //$$$$$2
-// #define ADR_PUMP_COL_1 14
-// //$$$$$2
-
-//** Addresses for variables that are sent **//
-// Even addresses are used for previous values
-#define ADR_TEMP_AIR_ROOM 1
-#define ADR_HUMIDITY_AIR_ROOM 3
-#define ADR_TEMP_AIR_OUTSIDE 5
-#define ADR_HUMIDITY_AIR_OUTSIDE 7
-#define ADR_STATUS_HEATER 9
-#define ADR_SOIL_HUMIDITY_COL_1 11
-#define ADR_COMMAND_PUMP_COL_1 13
-
-//** Addresses for variables that are recived **//
-#define ADR_SET_TEMP_HEATER (NUMBER_OF_ADDRESSES - 1)
-#define ADR_AUTOWATERING (NUMBER_OF_ADDRESSES - 2)
-//$$$$$3
-
-float datas[NUMBER_OF_ADDRESSES];
+float actual_values[NUMBER_OF_ADDRESSES];
+float prev_values[NUMBER_OF_ADDRESSES];
 
 //$$$$$1
 //** Soil Humidity **//
