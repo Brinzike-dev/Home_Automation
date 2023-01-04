@@ -64,25 +64,33 @@ float codeCharToFloat(unsigned char val)
 
 void sendMessage()
 {
-    for (unsigned char i = 2; i < NUMBER_OF_ADDRESSES; i += 2)
+    for (unsigned char i = 0; i < NUMBER_OF_ADDRESSES; i++)
     {
-        if (isnan(datas[i]))
+        // Check if the value is valid
+        if (isnan(actual_values[i]))
         {
-            if (!isnan(datas[i - 1]))
+            // If the previously sent value is still NAN
+            if (!isnan(prev_values[i]))
             {
+                // Send infavilid value
                 Serial.write(i);
                 Serial.write(INVALID_VALUE);
+                // Update prev value
+                prev_values[i] = actual_values[i];
             }
         }
         else
-        {
-            if (datas[i] != datas[i - 1])
+        {   
+            if (actual_values[i] != prev_values[i])
             {
+                // Send value
                 Serial.write(i);
                 // Particular case
-                if (i == ADR_ACT_AIR_HUMIDITY_ROOM || 
-                    i == ADR_ACT_AIR_HUMIDITY_OUTSIDE ||
-                    i == ADR_ACT_STATUS_HEATER)
+                if (i == ADR_HUMIDITY_AIR_ROOM || 
+                    i == ADR_HUMIDITY_AIR_OUTSIDE ||
+                    i == ADR_STATUS_HEATER ||
+                    i == ADR_SOIL_HUMIDITY_COL_1 ||
+                    i == ADR_COMMAND_PUMP_COL_1)
                 {
                     Serial.write((unsigned char)datas[i]);
                 }
@@ -90,9 +98,10 @@ void sendMessage()
                 {
                     Serial.write(codeFloatToChar(datas[i]));
                 }
+                //Update prev value
+                prev_values[i] = actual_values[i];
             }
         }
-        datas[i - 1] = datas[i];
     }
 }
 
@@ -130,15 +139,18 @@ void reciveMessage()
             }
             else
             {
-                if (address == ADR_ACT_AIR_HUMIDITY_ROOM ||
-                    address == ADR_ACT_AIR_HUMIDITY_OUTSIDE ||
-                    address == ADR_ACT_STATUS_HEATER)
+                //Particular Case
+                if (address == ADR_HUMIDITY_AIR_ROOM || 
+                    address == ADR_HUMIDITY_AIR_OUTSIDE ||
+                    address == ADR_STATUS_HEATER ||
+                    address == ADR_SOIL_HUMIDITY_COL_1 ||
+                    address == ADR_COMMAND_PUMP_COL_1)
                 {
-                    datas[address] = val;
+                    actual_values[address] = val;
                 }
                 else
                 {
-                    datas[address] = codeCharToFloat(val);
+                    actual_values[address] = codeCharToFloat(val);
                 }
             }
         }
