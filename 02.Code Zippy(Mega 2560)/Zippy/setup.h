@@ -23,9 +23,6 @@ DHT dht_outside(DHT_PIN_OUTSIDE, DHTTYPE_OUTSIDE); //// Initialize DHT sensor fo
 //========== Declaration ==========//
 #define STATUS_MONITORING 0
 
-#define INVALID_VALUE B1111111
-#define INVALID_FLOAT -100000
-
 //!!!!!!!!!!!!!!! Update number of value !!!!!!!!!!!!!!!//
 #define NUMBER_OF_ADDRESSES 9
 

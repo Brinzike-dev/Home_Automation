@@ -1,9 +1,6 @@
 //========== Declaration ==========//
 #define STATUS_MONITORING 0
 
-#define INVALID_VALUE B1111111
-#define INVALID_FLOAT -100000
-
 //!!!!!!!!!!!!!!! Update number of value !!!!!!!!!!!!!!!//
 #define NUMBER_OF_ADDRESSES 9
 
@@ -19,3 +16,4 @@
 #define ADR_AUTOWATERING 8
 
 float actual_values[NUMBER_OF_ADDRESSES];
+float prev_values[NUMBER_OF_ADDRESSES];

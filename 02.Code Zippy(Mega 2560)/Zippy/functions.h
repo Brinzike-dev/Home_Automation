@@ -34,7 +34,7 @@ void readSensors()
     for (int i = 0; i < NUMBER_OF_MEASUREMENTS; i++)
     {
         average_val_soil_hum_1 += int(((MAX_VAL_SOIL_HUM - analogRead(SOIL_HUM_COL_1_PIN)) * 100) / DIFERENCE);
-// TODO:::::: Sa dispara delay-ul asta. Incetineste rularea
+        // TODO:::::: Sa dispara delay-ul asta. Incetineste rularea
         delay(10);
     }
 
@@ -97,8 +97,8 @@ void watering()
         }
     }
 
-//TODO::::: POSIBLE REVERSE HIGH WITH LOW
-    (actual_values[ADR_COMMAND_PUMP_COL_1])?(digitalWrite(PUMP_COL_1_PIN, HIGH)):(digitalWrite(PUMP_COL_1_PIN, LOW););
+    // TODO::::: POSIBLE REVERSE HIGH WITH LOW
+    (actual_values[ADR_COMMAND_PUMP_COL_1]) ? (digitalWrite(PUMP_COL_1_PIN, HIGH)) : (digitalWrite(PUMP_COL_1_PIN, LOW););
 }
 //$$$$$2
 
@@ -126,5 +126,19 @@ void monitoring()
         Serial.println(actual_values[ADR_STATUS_HEATER]);
     }
 }
+
+//$$$$$4
+void checkAllValuesToSend()
+{
+    for (unsigned char i = 0; i < NUMBER_OF_ADDRESSES; i++)
+    {
+        if (actual_values[i] != prev_values[i])
+        {
+            sendMessage(i, actual_values[i]);
+            prev_values[i] = actual_values[i];
+        }
+    }
+}
+//$$$$$4
 
 //========= --------- ==========//

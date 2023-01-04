@@ -1,159 +1,120 @@
 //========= Communication =========//
-unsigned char codeFloatToChar(float val)
+void sendMessage(unsigned char adress, float value)
 {
-    unsigned char result = 0;
+    char buffer[11];
+    int intpart = (int)(value * 100);
 
-    //** Take negative value **//
-    if (val < 0)
+    //** Fill Buffer **//
+    //** Adress char 0-1 **//
+    if (adress < 10)
     {
-        result = result | B10000000;
-        val = (-1) * val;
-    }
-
-    //** Check if is in range -60...+60
-    if (val <= 60)
-    {
-        result += (unsigned char)val << 1;
+        buffer[0] = '0';
+        buffer[1] = adress + '0';
     }
     else
     {
-        //** Invalide value **//
-        return INVALID_VALUE;
+        buffer[0] = (int)(i / 10) + '0';
+        buffer[1] = adress % 10 + '0';
     }
 
-    //** Check half for degr **//
-    if (val - (int)val < 0.5)
+    if (isnan(value))
     {
-        result++;
-    }
-    else
-    {
-        result = result & B11111110;
-    }
+        //** Sign char 2 **//
+        buffer[2] = '/';
 
-    return result;
-}
-
-float codeCharToFloat(unsigned char val)
-{
-    float result = 0;
-    //** Check for invalide value **//
-    if (val == INVALID_VALUE)
-    {
-        //** Invalide value **//
-        return INVALID_FLOAT;
-    }
-
-    //** Take Value **//
-    result = (val & B01111111) >> 1;
-
-    //** Check for half degr **//
-    if (val & 1)
-    {
-        result += 0.5;
-    }
-
-    //** Take negative value **//
-    if (val >> 7 == 1)
-    {
-        result = (-1) * result;
-    }
-
-    return result;
-}
-
-void sendMessage()
-{
-    for (unsigned char i = 0; i < NUMBER_OF_ADDRESSES; i++)
-    {
-        // Check if the value is valid
-        if (isnan(actual_values[i]))
+        //** Number char 3-9**//
+        for (int j = 3; j < 10; j++)
         {
-            // If the previously sent value is still NAN
-            if (!isnan(prev_values[i]))
-            {
-                // Send infavilid value
-                Serial.write(i);
-                Serial.write(INVALID_VALUE);
-                // Update prev value
-                prev_values[i] = actual_values[i];
-            }
+            buffer[j] = '9';
+        }
+    }
+    else
+    {
+        //** Sign char 2 **//
+        if (value < 0)
+        {
+            buffer[2] = '-';
+            intpart = intpart * (-1);
         }
         else
-        {   
-            if (actual_values[i] != prev_values[i])
+        {
+            buffer[2] = '+';
+        }
+
+        //** Number char 3-9**//
+        for (int j = 9; j >= 3; j--)
+        {
+            if (j == 7)
             {
-                // Send value
-                Serial.write(i);
-                // Particular case
-                if (i == ADR_HUMIDITY_AIR_ROOM || 
-                    i == ADR_HUMIDITY_AIR_OUTSIDE ||
-                    i == ADR_STATUS_HEATER ||
-                    i == ADR_SOIL_HUMIDITY_COL_1 ||
-                    i == ADR_COMMAND_PUMP_COL_1)
-                {
-                    Serial.write((unsigned char)datas[i]);
-                }
-                else
-                {
-                    Serial.write(codeFloatToChar(datas[i]));
-                }
-                //Update prev value
-                prev_values[i] = actual_values[i];
+                buffer[j] = '.';
+            }
+            else
+            {
+                buffer[j] = intpart % 10 + '0';
+                intpart = intpart / 10;
             }
         }
+    }
+
+    //** End **//
+    buffer[10] = '\n';
+
+    //** Send value **//
+    for (int i = 0; i <= 10; i++)
+    {
+        Serial.write(buffer[i]);
     }
 }
 
 void reciveMessage()
 {
-    if (Serial.available())
+    char buffer[11];
+    char value_recived;
+    int adress;
+    char sign, end_message;
+    float value_float = 0;
+
+    for (int i = 0; i <= 10; i++)
     {
-        int address = (int)Serial.read();
-
-        if (STATUS_MONITORING)
-        {
-            Serial.print("-----> Value of address recived : ");
-            Serial.println(address);
-        }
-
-        // Force to sync / filter invalid messages
-        if (address < 0 || address > NUMBER_OF_ADDRESSES)
-        {
-            return;
-        }
-
         if (Serial.available())
         {
-            unsigned char val = Serial.read();
-
-            if (STATUS_MONITORING)
-            {
-                Serial.print("-----> Value recived : ");
-                Serial.println(val, BIN);
-            }
-
-            if (val == INVALID_VALUE)
-            {
-                datas[address] = NAN;
-            }
-            else
-            {
-                //Particular Case
-                if (address == ADR_HUMIDITY_AIR_ROOM || 
-                    address == ADR_HUMIDITY_AIR_OUTSIDE ||
-                    address == ADR_STATUS_HEATER ||
-                    address == ADR_SOIL_HUMIDITY_COL_1 ||
-                    address == ADR_COMMAND_PUMP_COL_1)
-                {
-                    actual_values[address] = val;
-                }
-                else
-                {
-                    actual_values[address] = codeCharToFloat(val);
-                }
-            }
+            value_recived = Serial.read();
+            buffer[i] = value_recived;
         }
     }
+
+    adress = (buffer[0] - '0') * 10 + buffer[1] - '0';
+    sign = buffer[2];
+    if (sign == '/')
+    {
+        actual_values[adress] = NAN;
+        return;
+    }
+
+    for (int i = 3; i <= 9; i++)
+    {
+        if (i != 7)
+        {
+            value_float = value_float * 10 + buffer[i] - '0';
+        }
+    }
+    value_float = value_float / 100;
+
+    if (sign == '-')
+    {
+        value_float = value_float * (-1);
+    }
+
+    end_message = buffer[10];
+
+    //** Message corrupted **//
+    if (end_message != '\n')
+    {
+        actual_values[adress] = NAN;
+        return;
+    }
+
+    actual_values[adress] = value_float;
+    prev_values[adress] = actual_values[adress];
 }
 //========= ------------- =========//

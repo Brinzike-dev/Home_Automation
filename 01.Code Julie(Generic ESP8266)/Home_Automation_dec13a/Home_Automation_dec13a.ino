@@ -41,6 +41,5 @@ void loop()
 
 void onTempSetChange()
 {
-  Serial.write(ADR_SET_TEMP_HEATER);
-  Serial.write(codeFloatToChar(temp_set));
+  sendMessage(ADR_SET_TEMP_HEATER, temp_set);
 }

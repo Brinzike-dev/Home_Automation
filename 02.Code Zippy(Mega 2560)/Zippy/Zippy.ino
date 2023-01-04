@@ -48,7 +48,9 @@ void loop()
   //*** Control Heater ***//
   heating();
   monitoring();
-  sendMessage();
+  //$$$$$4
+  checkAllValuesToSend();
+  //$$$$$4
   reciveMessage();
   delay(1);
 }

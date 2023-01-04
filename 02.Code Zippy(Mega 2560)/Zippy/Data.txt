@@ -32,3 +32,4 @@ Modificari :
 //$$$$$1 - add soil Humidity sensor
 //$$$$$2 - add control water pump
 //$$$$$3 - restructurare adrese
+//$$$$$4 - Restructurate communication
