@@ -1,0 +1,34 @@
+In datas stored by adress :
+0 = Prev Temperature form DHT_INSIDE
+1 = Actual Temperature from DHT_INSDIE
+2 = Prev Humidity from DHT_INSDIE
+3 = Actual Humidity form DHT_INSDIE
+4 = Prev Status Heater
+5 = Actual Status Heater
+6 = Value of set heater
+
+
+
+
+If you want add more variables
+in Zippy
+1/12  - Define your pin
+2/12  - Add library if necessary
+3/12  - Add define ADRESS FOR datas
+4/12  - Add one more in datas[x];
+5/12  - Add error if is necessary
+6/  - Add Setup if is necessary
+6/12  - Add readSensors() to read values
+7/12  - Add SendMessage()
+8/12  - Add condition if force to sync
+9/12  - Make function
+in Julie
+10/12  - Add condition if force to syn
+11/12  - Add one case in switch
+12/12  - Modify function onChange if is necessary
+
+
+Modificari :
+//$$$$$1 - add soil Humidity sensor
+//$$$$$2 - add control water pump
+//$$$$$3 - restructurare adrese
