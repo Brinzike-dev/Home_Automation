@@ -1,20 +1,20 @@
 //========= Communication =========//
-void sendMessage(unsigned char adress, float value)
+void sendMessage(unsigned char address, float value)
 {
     char buffer[11];
     int intpart = (int)(value * 100);
 
     //** Fill Buffer **//
-    //** Adress char 0-1 **//
-    if (adress < 10)
+    //** Address char 0-1 **//
+    if (address < 10)
     {
         buffer[0] = '0';
-        buffer[1] = adress + '0';
+        buffer[1] = address + '0';
     }
     else
     {
-        buffer[0] = (int)(i / 10) + '0';
-        buffer[1] = adress % 10 + '0';
+        buffer[0] = (int)(address / 10) + '0';
+        buffer[1] = address % 10 + '0';
     }
 
     if (isnan(value))
@@ -70,7 +70,7 @@ void reciveMessage()
 {
     char buffer[11];
     char value_recived;
-    int adress;
+    int address;
     char sign, end_message;
     float value_float = 0;
 
@@ -83,11 +83,11 @@ void reciveMessage()
         }
     }
 
-    adress = (buffer[0] - '0') * 10 + buffer[1] - '0';
+    address = (buffer[0] - '0') * 10 + buffer[1] - '0';
     sign = buffer[2];
     if (sign == '/')
     {
-        actual_values[adress] = NAN;
+        actual_values[address] = NAN;
         return;
     }
 
@@ -110,11 +110,10 @@ void reciveMessage()
     //** Message corrupted **//
     if (end_message != '\n')
     {
-        actual_values[adress] = NAN;
         return;
     }
 
-    actual_values[adress] = value_float;
-    prev_values[adress] = actual_values[adress];
+    actual_values[address] = value_float;
+    prev_values[address] = actual_values[address];
 }
 //========= ------------- =========//

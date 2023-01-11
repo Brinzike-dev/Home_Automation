@@ -12,8 +12,9 @@
 #include "settings.h"
 //** Include Functions **//
 #include "setup.h"
-#include "functions.h"
 #include "communication.h"
+#include "functions.h"
+
 //========== -------- ==========//
 
 //========== Setup ==========//

@@ -31,14 +31,17 @@ void readSensors()
 
     //$$$$$1
     int average_val_soil_hum_1 = 0;
+    int val_soil_hum_1 = 0;
     for (int i = 0; i < NUMBER_OF_MEASUREMENTS; i++)
     {
         average_val_soil_hum_1 += int(((MAX_VAL_SOIL_HUM - analogRead(SOIL_HUM_COL_1_PIN)) * 100) / DIFERENCE);
+
         // TODO:::::: Sa dispara delay-ul asta. Incetineste rularea
         delay(10);
     }
+    val_soil_hum_1 = average_val_soil_hum_1 / NUMBER_OF_MEASUREMENTS;
 
-    if (average_val_soil_hum_1 <= 0 || average_val_soil_hum_1 > 100)
+    if (val_soil_hum_1 <= 0 || val_soil_hum_1 > 100)
     {
         error_read_soil_hum_1 = true;
         actual_values[ADR_SOIL_HUMIDITY_COL_1] = NAN;
@@ -46,7 +49,7 @@ void readSensors()
     else
     {
         error_read_soil_hum_1 = false;
-        actual_values[ADR_SOIL_HUMIDITY_COL_1] = average_val_soil_hum_1 / NUMBER_OF_MEASUREMENTS; // Give value from 0 and 100
+        actual_values[ADR_SOIL_HUMIDITY_COL_1] = val_soil_hum_1; // Give value from 0 and 100
     }
     //$$$$$1
 }
@@ -98,7 +101,7 @@ void watering()
     }
 
     // TODO::::: POSIBLE REVERSE HIGH WITH LOW
-    (actual_values[ADR_COMMAND_PUMP_COL_1]) ? (digitalWrite(PUMP_COL_1_PIN, HIGH)) : (digitalWrite(PUMP_COL_1_PIN, LOW););
+    (actual_values[ADR_COMMAND_PUMP_COL_1]) ? (digitalWrite(PUMP_COL_1_PIN, HIGH)) : (digitalWrite(PUMP_COL_1_PIN, LOW));
 }
 //$$$$$2
 
@@ -132,7 +135,15 @@ void checkAllValuesToSend()
 {
     for (unsigned char i = 0; i < NUMBER_OF_ADDRESSES; i++)
     {
-        if (actual_values[i] != prev_values[i])
+        if (isnan(actual_values[i]))
+        {
+            if (!isnan(prev_values[i]))
+            {
+                sendMessage(i, actual_values[i]);
+                prev_values[i] = NAN;
+            }
+        }
+        else if (actual_values[i] != prev_values[i])
         {
             sendMessage(i, actual_values[i]);
             prev_values[i] = actual_values[i];
