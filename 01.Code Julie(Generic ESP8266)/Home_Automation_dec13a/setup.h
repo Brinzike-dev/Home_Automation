@@ -1,22 +1,19 @@
 //========== Declaration ==========//
 #define STATUS_MONITORING 0
 
-#define INVALID_VALUE B1111111
-#define INVALID_FLOAT -100000
-
-#define NUMBER_OF_ADDRESSES 11
+//!!!!!!!!!!!!!!! Update number of value !!!!!!!!!!!!!!!//
+#define NUMBER_OF_ADDRESSES 9
 
 //** Adress of datas **//
-#define ADR_SET_TEMP_HEATER 0
-#define ADR_PREV_AIR_TEMP_ROOM 1
-#define ADR_ACT_AIR_TEMP_ROOM 2
-#define ADR_PREV_AIR_HUMIDITY_ROOM 3
-#define ADR_ACT_AIR_HUMIDITY_ROOM 4
-#define ADR_PREV_STATUS_HEATER 5
-#define ADR_ACT_STATUS_HEATER 6
-#define ADR_PREV_AIR_TEMP_OUTSIDE 7
-#define ADR_ACT_AIR_TEMP_OUTSIDE 8
-#define ADR_PREV_AIR_HUMIDITY_OUTSIDE 9
-#define ADR_ACT_AIR_HUMIDITY_OUTSIDE 10
+#define ADR_TEMP_AIR_ROOM 0
+#define ADR_HUMIDITY_AIR_ROOM 1
+#define ADR_TEMP_AIR_OUTSIDE 2
+#define ADR_HUMIDITY_AIR_OUTSIDE 3
+#define ADR_STATUS_HEATER 4
+#define ADR_SOIL_HUMIDITY_COL_1 5
+#define ADR_COMMAND_PUMP_COL_1 6
+#define ADR_SET_TEMP_HEATER 7
+#define ADR_AUTOWATERING 8
 
-float datas[NUMBER_OF_ADDRESSES];
+float actual_values[NUMBER_OF_ADDRESSES];
+float prev_values[NUMBER_OF_ADDRESSES];

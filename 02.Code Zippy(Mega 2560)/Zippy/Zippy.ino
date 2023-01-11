@@ -12,8 +12,9 @@
 #include "settings.h"
 //** Include Functions **//
 #include "setup.h"
-#include "functions.h"
 #include "communication.h"
+#include "functions.h"
+
 //========== -------- ==========//
 
 //========== Setup ==========//
@@ -33,10 +34,11 @@ void setup()
   //$$$$$1
 
   //$$$$$2
-  pinMode(PUMP_COL_1, OUTPUT);
+  pinMode(PUMP_COL_1_PIN, OUTPUT);
   //$$$$$2
 
-  datas[ADR_SET_TEMP_HEATER] = 18;
+  actual_values[ADR_SET_TEMP_HEATER] = 18;
+  prev_values[ADR_SET_TEMP_HEATER] = 18;
 }
 //========== ------ ==========//
 
@@ -47,7 +49,9 @@ void loop()
   //*** Control Heater ***//
   heating();
   monitoring();
-  sendMessage();
+  //$$$$$4
+  checkAllValuesToSend();
+  //$$$$$4
   reciveMessage();
   delay(1);
 }
