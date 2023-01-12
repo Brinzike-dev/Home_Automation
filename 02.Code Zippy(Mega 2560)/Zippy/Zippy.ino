@@ -28,14 +28,8 @@ void setup()
 
   //** pinMode setup **//
   pinMode(RELAY_HEATING_PIN, OUTPUT);
-
-  //$$$$$1
   pinMode(SOIL_HUM_COL_1_PIN, INPUT);
-  //$$$$$1
-
-  //$$$$$2
   pinMode(PUMP_COL_1_PIN, OUTPUT);
-  //$$$$$2
 
   actual_values[ADR_SET_TEMP_HEATER] = 18;
   prev_values[ADR_SET_TEMP_HEATER] = 18;
@@ -49,9 +43,7 @@ void loop()
   //*** Control Heater ***//
   heating();
   monitoring();
-  //$$$$$4
   checkAllValuesToSend();
-  //$$$$$4
   reciveMessage();
   delay(1);
 }

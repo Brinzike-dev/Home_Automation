@@ -2,108 +2,119 @@
 void readSensors()
 {
     //----- DHT ROOM -----//
-    actual_values[ADR_TEMP_AIR_ROOM] = dht_room.readTemperature();
-    actual_values[ADR_HUMIDITY_AIR_ROOM] = dht_room.readHumidity();
+    if (AVAILABLE_DHT_ROOM)
+    {
+        actual_values[ADR_TEMP_AIR_ROOM] = dht_room.readTemperature();
+        actual_values[ADR_HUMIDITY_AIR_ROOM] = dht_room.readHumidity();
 
-    //----- Check Error -----//
-    if (isnan(actual_values[ADR_TEMP_AIR_ROOM]) || isnan(actual_values[ADR_HUMIDITY_AIR_ROOM]))
-    {
-        error_read_dht_room = true;
-    }
-    else
-    {
-        error_read_dht_room = false;
+        //----- Check Error -----//
+        if (isnan(actual_values[ADR_TEMP_AIR_ROOM]) || isnan(actual_values[ADR_HUMIDITY_AIR_ROOM]))
+        {
+            error_read_dht_room = true;
+        }
+        else
+        {
+            error_read_dht_room = false;
+        }
     }
 
     //----- DHT OUTSIDE -----//
-    actual_values[ADR_TEMP_AIR_OUTSIDE] = dht_outside.readTemperature();
-    actual_values[ADR_HUMIDITY_AIR_OUTSIDE] = dht_outside.readHumidity();
+    if (AVAILABLE_DHT_OUTSIDE)
+    {
+        actual_values[ADR_TEMP_AIR_OUTSIDE] = dht_outside.readTemperature();
+        actual_values[ADR_HUMIDITY_AIR_OUTSIDE] = dht_outside.readHumidity();
 
-    //----- Check Error -----//
-    if (isnan(actual_values[ADR_TEMP_AIR_OUTSIDE]) || isnan(actual_values[ADR_HUMIDITY_AIR_OUTSIDE]))
-    {
-        error_read_dht_outside = true;
-    }
-    else
-    {
-        error_read_dht_outside = false;
+        //----- Check Error -----//
+        if (isnan(actual_values[ADR_TEMP_AIR_OUTSIDE]) || isnan(actual_values[ADR_HUMIDITY_AIR_OUTSIDE]))
+        {
+            error_read_dht_outside = true;
+        }
+        else
+        {
+            error_read_dht_outside = false;
+        }
     }
 
-    //$$$$$1
-    int average_val_soil_hum_1 = 0;
-    int val_soil_hum_1 = 0;
-    for (int i = 0; i < NUMBER_OF_MEASUREMENTS; i++)
+    //----- Soil Humidity Column 1 -----//
+    if (AVAILABLE_SOIL_HUMIDITY_COL_1)
     {
-        average_val_soil_hum_1 += int(((MAX_VAL_SOIL_HUM - analogRead(SOIL_HUM_COL_1_PIN)) * 100) / DIFERENCE);
+        int average_val_soil_hum_1 = 0;
+        int val_soil_hum_1 = 0;
+        for (int i = 0; i < NUMBER_OF_MEASUREMENTS; i++)
+        {
+            average_val_soil_hum_1 += int(((MAX_VAL_SOIL_HUM - analogRead(SOIL_HUM_COL_1_PIN)) * 100) / DIFERENCE);
 
-        // TODO:::::: Sa dispara delay-ul asta. Incetineste rularea
-        delay(10);
-    }
-    val_soil_hum_1 = average_val_soil_hum_1 / NUMBER_OF_MEASUREMENTS;
+            // TODO:::::: Sa dispara delay-ul asta. Incetineste rularea
+            delay(10);
+        }
+        val_soil_hum_1 = average_val_soil_hum_1 / NUMBER_OF_MEASUREMENTS;
 
-    if (val_soil_hum_1 <= 0 || val_soil_hum_1 > 100)
-    {
-        error_read_soil_hum_1 = true;
-        actual_values[ADR_SOIL_HUMIDITY_COL_1] = NAN;
+        if (val_soil_hum_1 <= 0 || val_soil_hum_1 > 100)
+        {
+            error_read_soil_hum_1 = true;
+            actual_values[ADR_SOIL_HUMIDITY_COL_1] = NAN;
+        }
+        else
+        {
+            error_read_soil_hum_1 = false;
+            actual_values[ADR_SOIL_HUMIDITY_COL_1] = val_soil_hum_1; // Give value from 0 and 100
+        }
     }
-    else
-    {
-        error_read_soil_hum_1 = false;
-        actual_values[ADR_SOIL_HUMIDITY_COL_1] = val_soil_hum_1; // Give value from 0 and 100
-    }
-    //$$$$$1
 }
 
 void heating()
 {
-    if (error_read_dht_room)
+    if (AVAILABLE_HEATING_ROOM)
     {
-        actual_values[ADR_STATUS_HEATER] = 0;
-        digitalWrite(RELAY_HEATING_PIN, HIGH);
-        return;
-    }
-
-    if (actual_values[ADR_TEMP_AIR_ROOM] < actual_values[ADR_SET_TEMP_HEATER] - 0.5)
-    {
-        actual_values[ADR_STATUS_HEATER] = 1;
-    }
-
-    if (actual_values[ADR_TEMP_AIR_ROOM] > actual_values[ADR_SET_TEMP_HEATER])
-    {
-        actual_values[ADR_STATUS_HEATER] = 0;
-    }
-
-    (actual_values[ADR_STATUS_HEATER]) ? (digitalWrite(RELAY_HEATING_PIN, LOW)) : (digitalWrite(RELAY_HEATING_PIN, HIGH));
-}
-
-//$$$$$2
-void watering()
-{
-    if (actual_values[ADR_AUTOWATERING])
-    {
-        // Check if soil humidity sensor work ok
-        if (error_read_soil_hum_1)
+        if (error_read_dht_room)
         {
-            actual_values[ADR_COMMAND_PUMP_COL_1] = 0;
+            actual_values[ADR_STATUS_HEATER] = 0;
         }
         else
         {
-            if (actual_values[ADR_SOIL_HUMIDITY_COL_1] < VALUE_START_WATERING)
+            if (actual_values[ADR_TEMP_AIR_ROOM] < actual_values[ADR_SET_TEMP_HEATER] - 0.5)
             {
-                actual_values[ADR_COMMAND_PUMP_COL_1] = 1;
+                actual_values[ADR_STATUS_HEATER] = 1;
             }
 
-            if (actual_values[ADR_SOIL_HUMIDITY_COL_1] > VALUE_STOP_WATERING)
+            if (actual_values[ADR_TEMP_AIR_ROOM] > actual_values[ADR_SET_TEMP_HEATER])
+            {
+                actual_values[ADR_STATUS_HEATER] = 0;
+            }
+        }
+
+        (actual_values[ADR_STATUS_HEATER]) ? (digitalWrite(RELAY_HEATING_PIN, LOW)) : (digitalWrite(RELAY_HEATING_PIN, HIGH));
+    }
+}
+
+void watering()
+{
+    if (AVAILABLE_WATERING_COL_1)
+    {
+        if (actual_values[ADR_AUTOWATERING])
+        {
+            // Check if soil humidity sensor work ok
+            if (error_read_soil_hum_1)
             {
                 actual_values[ADR_COMMAND_PUMP_COL_1] = 0;
             }
-        }
-    }
+            else
+            {
+                if (actual_values[ADR_SOIL_HUMIDITY_COL_1] < VALUE_START_WATERING)
+                {
+                    actual_values[ADR_COMMAND_PUMP_COL_1] = 1;
+                }
 
-    // TODO::::: POSIBLE REVERSE HIGH WITH LOW
-    (actual_values[ADR_COMMAND_PUMP_COL_1]) ? (digitalWrite(PUMP_COL_1_PIN, HIGH)) : (digitalWrite(PUMP_COL_1_PIN, LOW));
+                if (actual_values[ADR_SOIL_HUMIDITY_COL_1] > VALUE_STOP_WATERING)
+                {
+                    actual_values[ADR_COMMAND_PUMP_COL_1] = 0;
+                }
+            }
+        }
+
+        (actual_values[ADR_COMMAND_PUMP_COL_1]) ? (digitalWrite(PUMP_COL_1_PIN, LOW)) : (digitalWrite(PUMP_COL_1_PIN, HIGH));
+    }
 }
-//$$$$$2
 
 void monitoring()
 {
@@ -130,7 +141,6 @@ void monitoring()
     }
 }
 
-//$$$$$4
 void checkAllValuesToSend()
 {
     for (unsigned char i = 0; i < NUMBER_OF_ADDRESSES; i++)
@@ -150,6 +160,4 @@ void checkAllValuesToSend()
         }
     }
 }
-//$$$$$4
-
 //========= --------- ==========//
